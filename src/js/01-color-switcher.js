@@ -1,31 +1,27 @@
-const startButtonEl = document.querySelector('[data-start]');
-const stopButtonEl = document.querySelector('[data-stop]');
-const body = document.body;
-let colorSwitcherTimeoutId = null;
+import getRefs from '../modules/bg-color-switcher/getRefs';
+import setNodeRandomBgColor from '../modules/bg-color-switcher/setNodeRandomBgColor';
 
-startButtonEl.addEventListener('click', onStartBtnClick);
-stopButtonEl.addEventListener('click', onStopBtnClick);
+const ref = getRefs();
+
+ref.startButton.addEventListener('click', onStartBtnClick);
+ref.stopButton.addEventListener('click', onStopBtnClick);
 
 function onStartBtnClick(event) {
-  switchBodyBgColor();
+  const bodyEl = document.body;
 
-  startButtonEl.disabled = true;
-  stopButtonEl.disabled = false;
+  setNodeRandomBgColor(bodyEl);
+
+  ref.colorSwitcherTimeoutId = setInterval(() => {
+    setNodeRandomBgColor(bodyEl);
+  }, 1000);
+
+  ref.startButton.disabled = true;
+  ref.stopButton.disabled = false;
 }
 
 function onStopBtnClick(event) {
-  clearTimeout(colorSwitcherTimeoutId);
+  clearTimeout(ref.colorSwitcherTimeoutId);
 
-  stopButtonEl.disabled = true;
-  startButtonEl.disabled = false;
-}
-
-function switchBodyBgColor() {
-  body.style.backgroundColor = getRandomHexColor();
-
-  colorSwitcherTimeoutId = setTimeout(switchBodyBgColor, 1000);
-}
-
-function getRandomHexColor() {
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  ref.stopButton.disabled = true;
+  ref.startButton.disabled = false;
 }
