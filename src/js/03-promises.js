@@ -1,45 +1,25 @@
-import { Notify } from 'notiflix';
+import notify from '../modules/promises-generator/notify';
+import createPromise from '../modules/promises-generator/createPromise';
+import getRefs from '../modules/promises-generator/getRefs';
 
-const formEl = document.querySelector('.form');
+const ref = getRefs();
 
-formEl.addEventListener('submit', onFormSubmit);
+ref.form.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(e) {
   e.preventDefault();
 
-  const amount = Number(this.amount.value);
-  const step = Number(this.step.value);
-  let delay = Number(this.delay.value);
+  const amount = parseInt(this.amount.value);
+  const step = parseInt(this.step.value);
+  let delay = parseInt(this.delay.value);
 
   for (let i = 0; i < amount; i += 1) {
     const position = i + 1;
 
-    createPromise(position, delay).then(showSuccesMsg).catch(showErrorMsg);
+    createPromise(position, delay).then(notify.success).catch(notify.error);
 
     delay += step;
   }
 
   this.reset();
-}
-
-function createPromise(position, delay) {
-  return new Promise((resolve, reject) => {
-    const shouldResolve = Math.random() > 0.3;
-
-    setTimeout(() => {
-      if (shouldResolve) {
-        resolve({ position, delay });
-      } else {
-        reject({ position, delay });
-      }
-    }, delay);
-  });
-}
-
-function showSuccesMsg({ position, delay }) {
-  Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-}
-
-function showErrorMsg({ position, delay }) {
-  Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
 }
